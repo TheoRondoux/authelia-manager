@@ -34,6 +34,8 @@ type Configuration = {
             clients?: OidcClient[];
         };
     };
+
+    webauthn?: WebAuthnConfig;
 };
 
 export type AccessRule = {
@@ -57,6 +59,35 @@ export type OidcClient = {
     access_token_signed_response_alg?: string;
     userinfo_signed_response_alg?: string;
     token_endpoint_auth_method?: string;
+};
+
+export type WebAuthnConfig = {
+    disable?: boolean;
+    enable_passkey_login?: boolean;
+    display_name?: string;
+    attestation_conveyance_preference?: string;
+    timeout?: string;
+
+    selection_criteria?: {
+        attachment?: string;
+        discoverability?: string;
+        user_verification?: string;
+    };
+
+    filtering?: {
+        permitted_aaguids?: string[];
+        prohibited_aaguids?: string[];
+        prohibit_backup_eligibility?: boolean;
+    };
+
+    metadata?: {
+        enabled?: boolean;
+        cache_policy?: string;
+        validate_trust_anchor?: boolean;
+        validate_entry?: boolean;
+        validate_entry_permit_zero_aaguid?: boolean;
+        validate_status?: boolean;
+    };
 };
 
 /* CONFIGURATION */
@@ -409,4 +440,25 @@ export async function deleteOidcClient(
     const file = await getConfigurationFile();
 
     await writeYaml(file, config);
+}
+
+/* WEBAUTHN CONFIGURATION */
+export async function getWebAuthnConfig(): Promise<WebAuthnConfig> {
+    const config = await readConfiguration();
+
+    return config.webauthn ?? {};
+}
+
+export async function updateWebAuthnConfig(
+    webauthn: WebAuthnConfig
+): Promise<WebAuthnConfig> {
+    const config = await readConfiguration();
+
+    config.webauthn = webauthn;
+
+    const file = await getConfigurationFile();
+
+    await writeYaml(file, config);
+
+    return webauthn;
 }

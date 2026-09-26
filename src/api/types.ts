@@ -53,3 +53,32 @@ export type OidcClient = {
     userinfo_signed_response_alg?: string;
     token_endpoint_auth_method?: string;
 };
+
+export type WebAuthnConfig = {
+    disable?: boolean;
+    enable_passkey_login?: boolean;
+    display_name?: string;
+    attestation_conveyance_preference?: string;
+    timeout?: string;
+
+    selection_criteria?: {
+        attachment?: string;
+        discoverability?: string;
+        user_verification?: string;
+    };
+
+    filtering?: {
+        permitted_aaguids?: string[];
+        prohibited_aaguids?: string[];
+        prohibit_backup_eligibility?: boolean;
+    };
+
+    metadata?: {
+        enabled?: boolean;
+        cache_policy?: string;
+        validate_trust_anchor?: boolean;
+        validate_entry?: boolean;
+        validate_entry_permit_zero_aaguid?: boolean;
+        validate_status?: boolean;
+    };
+};

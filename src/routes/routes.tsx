@@ -5,6 +5,7 @@ import Users from "../pages/Users/Users.tsx";
 import AccessRules from "../pages/AccessRules/AccessRules.tsx";
 import Settings from "../pages/Settings/Settings.tsx";
 import OidcClients from "../pages/OidcClients/OidcClients.tsx";
+import Passkeys from "../pages/Passkeys/Passkeys.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
             {
                 path: 'oidc-clients',
                 element: <OidcClients />
+            },
+            {
+                path: 'passkeys',
+                element: <Passkeys />
             },
             {
                 path: 'settings',

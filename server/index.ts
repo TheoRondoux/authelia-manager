@@ -19,6 +19,8 @@ import {
     createOidcClient,
     updateOidcClient,
     deleteOidcClient,
+    getWebAuthnConfig,
+    updateWebAuthnConfig,
 } from "./authelia.js";
 import {
     readConfig,
@@ -432,6 +434,40 @@ async function handleApi(
 
         sendJson(res, 200, {
             success: true,
+        });
+
+        return;
+    }
+
+    /*
+     * ============================================================
+     * WEBAUTHN CONFIGURATION
+     * ============================================================
+     */
+
+    if (
+        req.method === "GET" &&
+        req.url === "/api/authelia/webauthn"
+    ) {
+        const webauthn = await getWebAuthnConfig();
+
+        sendJson(res, 200, webauthn);
+        return;
+    }
+
+    if (
+        req.method === "PUT" &&
+        req.url === "/api/authelia/webauthn"
+    ) {
+        const body = await readJson(req);
+
+        const webauthn = await updateWebAuthnConfig(body);
+
+        sendJson(res, 200, {
+            success: true,
+            webauthn,
+            message:
+                "Configuration WebAuthn enregistrée. Synchronisez la configuration pour appliquer les changements.",
         });
 
         return;
