@@ -1,7 +1,10 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-const CONFIG_FILE = path.resolve("./server/config.json");
+const CONFIG_FILE = path.join(
+    import.meta.dirname,
+    "config.json"
+);
 
 export type AppConfig = {
     autheliaManager: {
