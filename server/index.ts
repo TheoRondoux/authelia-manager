@@ -14,9 +14,12 @@ import {
     createAccessRule,
     updateAccessRule,
     deleteAccessRule,
-    readConfiguration,
     reloadAuthelia,
 } from "./authelia.js";
+import {
+    readConfig,
+    writeConfig,
+} from "./config.js";
 
 const PORT = Number(process.env.PORT ?? 3001);
 
@@ -297,27 +300,6 @@ async function handleApi(
 
     /*
      * ============================================================
-     * CONFIGURATION
-     * ============================================================
-     */
-
-    if (pathname === "/api/authelia/config") {
-        if (method === "GET") {
-            const config = await readConfiguration();
-
-            sendJson(res, 200, config);
-            return;
-        }
-
-        sendJson(res, 405, {
-            error: "Method not allowed",
-        });
-
-        return;
-    }
-
-    /*
-     * ============================================================
      * RELOAD AUTHELIA
      * ============================================================
      */
@@ -334,6 +316,47 @@ async function handleApi(
             error: "Method not allowed",
         });
 
+        return;
+    }
+
+        /*
+     * ============================================================
+     * CONFIGURATION AUTHELIA MANAGER
+     * ============================================================
+     */
+
+    if (req.method === "GET" && req.url === "/api/authelia/config") {
+        const config = await readConfig();
+
+        sendJson(res, 200, config);
+        return;
+    }
+
+    if (req.method === "PUT" && req.url === "/api/authelia/config") {
+        const body = await readJson(req);
+
+        if (
+            typeof body.configFolder !== "string" ||
+            typeof body.configFile !== "string" ||
+            typeof body.usersFile !== "string"
+        ) {
+            sendJson(res, 400, {
+                error: "Configuration Authelia invalide",
+            });
+            return;
+        }
+
+        const config = await readConfig();
+
+        config.autheliaManager = {
+            configFolder: body.configFolder,
+            configFile: body.configFile,
+            usersFile: body.usersFile,
+        };
+
+        await writeConfig(config);
+
+        sendJson(res, 200, config.autheliaManager);
         return;
     }
 

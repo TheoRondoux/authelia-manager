@@ -3,6 +3,7 @@ import Landing from "../pages/Dashboard/Landing.tsx";
 import {WithSidebar} from "../layout/WithSidebar/WithSidebar.tsx";
 import Users from "../pages/Users/Users.tsx";
 import AccessRules from "../pages/AccessRules/AccessRules.tsx";
+import Settings from "../pages/Settings/Settings.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -20,6 +21,10 @@ export const router = createBrowserRouter([
             {
                 path: 'access-rules',
                 element: <AccessRules />
+            },
+            {
+                path: 'settings',
+                element: <Settings />
             }
         ]
     }

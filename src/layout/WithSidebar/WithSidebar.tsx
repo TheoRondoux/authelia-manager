@@ -2,7 +2,7 @@ import {Outlet, useLocation} from "react-router";
 import {
     IconCheck,
     IconFingerprint,
-    IconLayoutDashboard, IconRefresh,
+    IconLayoutDashboard, IconRefresh, IconSettings,
     IconShieldCheck,
     IconUsers, IconX,
 } from "@tabler/icons-react";
@@ -66,6 +66,12 @@ export const WithSidebar = () => {
                         label={'Règles d\'accès'}
                         icon={<IconShieldCheck size={24} />}
                         isActive={location.pathname === '/access-rules'}
+                    />
+                    <SidebarLink
+                        href={'/settings'}
+                        label={'Paramètres'}
+                        icon={<IconSettings size={24} />}
+                        isActive={location.pathname === '/settings'}
                     />
                 </div>
                 <div className={'flex items-center w-full border-t border-gray-200 p-6'}>

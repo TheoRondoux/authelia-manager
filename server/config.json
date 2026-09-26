@@ -1,0 +1,7 @@
+{
+  "autheliaManager": {
+    "configFolder": "./config",
+    "configFile": "configuration.yml",
+    "usersFile": "users_database.yml"
+  }
+}

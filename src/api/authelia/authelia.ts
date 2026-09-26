@@ -1,7 +1,3 @@
-import type {
-    AutheliaConfig,
-} from "../types.ts";
-
 export const API_BASE = "/api/authelia";
 
 export async function request<T>(
@@ -33,14 +29,6 @@ export async function request<T>(
     }
 
     return response.json();
-}
-
-/* -------------------------------------------------------------------------- */
-/* CONFIG                                                                      */
-/* -------------------------------------------------------------------------- */
-
-export function getConfig(): Promise<AutheliaConfig> {
-    return request("/config");
 }
 
 /* -------------------------------------------------------------------------- */

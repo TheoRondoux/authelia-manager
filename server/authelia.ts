@@ -1,13 +1,16 @@
 import {
     readYaml,
     writeYaml,
-    CONFIGURATION_FILE,
-    USERS_FILE,
 } from "./yaml.js";
 
+import {
+    getConfigurationFile,
+    getUsersFile,
+} from "./config.js";
+
 import { hashPassword } from "./password.js";
-import {execFile} from "node:child_process";
-import {promisify} from "node:util";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 
 type RawUser = {
     password: string;
@@ -33,17 +36,21 @@ export type AccessRule = {
     subject?: string[];
 };
 
+/* CONFIGURATION */
+
 export async function readUsers() {
-    return readYaml<UsersDatabase>(USERS_FILE);
+    const file = await getUsersFile();
+
+    return readYaml<UsersDatabase>(file);
 }
 
 export async function readConfiguration() {
-    return readYaml<Configuration>(CONFIGURATION_FILE);
+    const file = await getConfigurationFile();
+
+    return readYaml<Configuration>(file);
 }
 
-/* -------------------------------------------------------------------------- */
-/* USERS                                                                       */
-/* -------------------------------------------------------------------------- */
+/* USERS */
 
 export async function getUsers() {
     const database = await readUsers();
@@ -105,7 +112,11 @@ export async function createUser(
         groups: user.groups ?? [],
     };
 
-    await writeYaml(USERS_FILE, database);
+    const file = await getUsersFile();
+
+    await writeYaml(file, database);
+
+    console.log(`Utilisateur ${username} créé avec succès`);
 
     return getUser(username);
 }
@@ -143,7 +154,9 @@ export async function updateUser(
         currentUser.groups = data.groups;
     }
 
-    await writeYaml(USERS_FILE, database);
+    const file = await getUsersFile();
+
+    await writeYaml(file, database);
 
     return getUser(username);
 }
@@ -157,12 +170,12 @@ export async function deleteUser(username: string) {
 
     delete database.users[username];
 
-    await writeYaml(USERS_FILE, database);
+    const file = await getUsersFile();
+
+    await writeYaml(file, database);
 }
 
-/* -------------------------------------------------------------------------- */
-/* GROUPS                                                                      */
-/* -------------------------------------------------------------------------- */
+/* GROUPS */
 
 export async function getGroups(): Promise<string[]> {
     const database = await readUsers();
@@ -184,8 +197,7 @@ export async function createGroup(name: string) {
     const users = Object.values(database.users ?? {});
 
     // Un groupe n'est pas un objet indépendant dans users_database.yml.
-    // On le crée donc en l'associant à aucun utilisateur pour le moment.
-    // Authelia n'a pas besoin d'une déclaration globale du groupe.
+    // Il est créé lorsqu'il est associé à un utilisateur.
 
     return getGroups();
 }
@@ -199,14 +211,14 @@ export async function deleteGroup(name: string) {
         );
     }
 
-    await writeYaml(USERS_FILE, database);
+    const file = await getUsersFile();
+
+    await writeYaml(file, database);
 
     return getGroups();
 }
 
-/* -------------------------------------------------------------------------- */
-/* RULES                                                                       */
-/* -------------------------------------------------------------------------- */
+/* RULES */
 
 export async function getAccessRules() {
     const config = await readConfiguration();
@@ -222,7 +234,9 @@ export async function createAccessRule(rule: AccessRule) {
 
     config.access_control.rules.push(rule);
 
-    await writeYaml(CONFIGURATION_FILE, config);
+    const file = await getConfigurationFile();
+
+    await writeYaml(file, config);
 
     return rule;
 }
@@ -241,7 +255,9 @@ export async function updateAccessRule(
 
     rules[index] = rule;
 
-    await writeYaml(CONFIGURATION_FILE, config);
+    const file = await getConfigurationFile();
+
+    await writeYaml(file, config);
 
     return rule;
 }
@@ -257,26 +273,22 @@ export async function deleteAccessRule(index: number) {
 
     rules.splice(index, 1);
 
-    await writeYaml(CONFIGURATION_FILE, config);
+    const file = await getConfigurationFile();
+
+    await writeYaml(file, config);
 }
 
-/* -------------------------------------------------------------------------- */
-/* CONTAINER                                                                  */
-/* -------------------------------------------------------------------------- */
+/* CONTAINER */
 
 const execFileAsync = promisify(execFile);
 
-const AUTHELIA_CONTAINER = "authelia";
+const RELOAD_SCRIPT = "/usr/local/bin/reload-authelia.sh";
 
 export async function reloadAuthelia() {
-    await execFileAsync("docker", [
-        "kill",
-        "--signal=SIGHUP",
-        AUTHELIA_CONTAINER,
-    ]);
+    await execFileAsync(RELOAD_SCRIPT);
 
     return {
         success: true,
-        message: "Authelia rechargé",
+        message: "Authelia redémarré",
     };
 }
