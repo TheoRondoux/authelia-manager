@@ -28,12 +28,35 @@ type Configuration = {
         default_policy?: string;
         rules?: AccessRule[];
     };
+
+    identity_providers?: {
+        oidc?: {
+            clients?: OidcClient[];
+        };
+    };
 };
 
 export type AccessRule = {
     domain: string;
     policy: string;
     subject?: string[];
+};
+
+export type OidcClient = {
+    client_id: string;
+    client_name: string;
+    client_secret?: string;
+    public: boolean;
+    authorization_policy: string;
+    require_pkce: boolean;
+    pkce_challenge_method?: string;
+    redirect_uris: string[];
+    scopes: string[];
+    response_types: string[];
+    grant_types: string[];
+    access_token_signed_response_alg?: string;
+    userinfo_signed_response_alg?: string;
+    token_endpoint_auth_method?: string;
 };
 
 /* CONFIGURATION */
@@ -291,4 +314,99 @@ export async function reloadAuthelia() {
         success: true,
         message: "Authelia redémarré",
     };
+}
+
+/* OIDC CLIENTS */
+
+export async function getOidcClients(): Promise<OidcClient[]> {
+    const config = await readConfiguration();
+
+    return config.identity_providers?.oidc?.clients ?? [];
+}
+
+export async function createOidcClient(
+    client: OidcClient
+): Promise<OidcClient> {
+    const config = await readConfiguration();
+
+    config.identity_providers ??= {};
+    config.identity_providers.oidc ??= {};
+    config.identity_providers.oidc.clients ??= [];
+
+    const clients = config.identity_providers.oidc.clients;
+
+    if (clients.some((c) => c.client_id === client.client_id)) {
+        throw new Error("Ce client OIDC existe déjà");
+    }
+
+    if (!client.client_id) {
+        throw new Error("Le client_id est obligatoire");
+    }
+
+    if (!client.client_name) {
+        throw new Error("Le client_name est obligatoire");
+    }
+
+    clients.push(client);
+
+    const file = await getConfigurationFile();
+
+    await writeYaml(file, config);
+
+    return client;
+}
+
+export async function updateOidcClient(
+    clientId: string,
+    client: OidcClient
+): Promise<OidcClient> {
+    const config = await readConfiguration();
+
+    const clients =
+        config.identity_providers?.oidc?.clients ?? [];
+
+    const index = clients.findIndex(
+        (c) => c.client_id === clientId
+    );
+
+    if (index === -1) {
+        throw new Error("Client OIDC introuvable");
+    }
+
+    if (client.client_id !== clientId) {
+        throw new Error(
+            "Le client_id ne peut pas être modifié"
+        );
+    }
+
+    clients[index] = client;
+
+    const file = await getConfigurationFile();
+
+    await writeYaml(file, config);
+
+    return client;
+}
+
+export async function deleteOidcClient(
+    clientId: string
+): Promise<void> {
+    const config = await readConfiguration();
+
+    const clients =
+        config.identity_providers?.oidc?.clients ?? [];
+
+    const index = clients.findIndex(
+        (c) => c.client_id === clientId
+    );
+
+    if (index === -1) {
+        throw new Error("Client OIDC introuvable");
+    }
+
+    clients.splice(index, 1);
+
+    const file = await getConfigurationFile();
+
+    await writeYaml(file, config);
 }

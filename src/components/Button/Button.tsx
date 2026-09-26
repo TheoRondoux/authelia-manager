@@ -4,12 +4,13 @@ interface ButtonProps {
     onClick?: () => void;
     disabled?: boolean;
     children?: React.ReactNode;
+    type?: 'button' | 'submit';
     variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'danger-outline' | 'success-outline';
     startSlot?: React.ReactNode;
     endSlot?: React.ReactNode;
 }
 
-const Button: React.FC<ButtonProps> = ({onClick = () => {}, disabled = false, children, variant = 'primary', startSlot, endSlot}: ButtonProps) => {
+const Button: React.FC<ButtonProps> = ({onClick = () => {}, disabled = false, children, type = 'button', variant = 'primary', startSlot, endSlot}: ButtonProps) => {
 
     let variantStyle = '';
     switch (variant) {
@@ -35,6 +36,7 @@ const Button: React.FC<ButtonProps> = ({onClick = () => {}, disabled = false, ch
 
     return (
         <button
+            type={type}
             className={`w-full flex flex-row items-center justify-center gap-2 ${variantStyle} py-2 px-4 rounded-lg hover:cursor-pointer transition-colors ease-in-out duration-300 disabled:opacity-50 disabled:cursor-not-allowed`}
             onClick={onClick}
             disabled={disabled}

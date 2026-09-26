@@ -1,5 +1,6 @@
 import {Outlet, useLocation} from "react-router";
 import {
+    IconBrandOauth,
     IconCheck,
     IconFingerprint,
     IconLayoutDashboard, IconMenu2, IconRefresh, IconSettings,
@@ -69,6 +70,12 @@ export const WithSidebar = () => {
                         isActive={location.pathname === '/access-rules'}
                     />
                     <SidebarLink
+                        href={'/oidc-clients'}
+                        label={'Clients OIDC'}
+                        icon={<IconBrandOauth size={24} />}
+                        isActive={location.pathname === '/oidc-clients'}
+                    />
+                    <SidebarLink
                         href={'/settings'}
                         label={'Paramètres'}
                         icon={<IconSettings size={24} />}
@@ -136,6 +143,12 @@ export const WithSidebar = () => {
                                 label={'Règles d\'accès'}
                                 icon={<IconShieldCheck size={24} />}
                                 isActive={location.pathname === '/access-rules'}
+                            />
+                            <SidebarLink
+                                href={'/oidc-clients'}
+                                label={'Clients OIDC'}
+                                icon={<IconBrandOauth size={24} />}
+                                isActive={location.pathname === '/oidc-clients'}
                             />
                             <SidebarLink
                                 href={'/settings'}

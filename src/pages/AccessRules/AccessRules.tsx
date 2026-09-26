@@ -1,7 +1,7 @@
 import type {AccessRule} from "../../api/types.ts";
 import {useEffect, useState} from "react";
 import {deleteAccessRule, getAccessRules} from "../../api/authelia/access-rules.ts";
-import {Button, IconButton, Input} from "../../components";
+import {Button, IconButton, Input, Tag} from "../../components";
 import {IconEdit, IconPlus, IconTrash, IconZoom} from "@tabler/icons-react";
 import {EditAccessRuleModal} from "./components/EditAccessRuleModal.tsx";
 import {AddAccessRuleModal} from "./components/AddAccessRuleModal.tsx";
@@ -68,11 +68,11 @@ const AccessRules = () => {
                                         <div className={'flex flex-col gap-3'}>
                                             <div className={'flex flex-col gap-px'}>
                                                 <p className={'font-semibold'}>{rule.domain}</p>
-                                                <p className={'text-gray-500'}>Policy: {rule.policy}</p>
+                                                <p className={'text-gray-500'}>Politique: {rule.policy}</p>
                                             </div>
                                             <div className={'flex gap-1'}>
                                                 {rule.subject?.map((item, subIndex) => (
-                                                    <span key={subIndex} className={'py-1 px-2 border border-gray-200 rounded-lg text-xs'}>{item}</span>
+                                                    <Tag key={subIndex} text={item} variant={'secondary'} />
                                                 ))}
                                             </div>
                                         </div>

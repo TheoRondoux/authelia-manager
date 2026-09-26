@@ -4,6 +4,7 @@ import {WithSidebar} from "../layout/WithSidebar/WithSidebar.tsx";
 import Users from "../pages/Users/Users.tsx";
 import AccessRules from "../pages/AccessRules/AccessRules.tsx";
 import Settings from "../pages/Settings/Settings.tsx";
+import OidcClients from "../pages/OidcClients/OidcClients.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -21,6 +22,10 @@ export const router = createBrowserRouter([
             {
                 path: 'access-rules',
                 element: <AccessRules />
+            },
+            {
+                path: 'oidc-clients',
+                element: <OidcClients />
             },
             {
                 path: 'settings',

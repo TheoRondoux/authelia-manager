@@ -15,6 +15,10 @@ import {
     updateAccessRule,
     deleteAccessRule,
     reloadAuthelia,
+    getOidcClients,
+    createOidcClient,
+    updateOidcClient,
+    deleteOidcClient,
 } from "./authelia.js";
 import {
     readConfig,
@@ -357,6 +361,79 @@ async function handleApi(
         await writeConfig(config);
 
         sendJson(res, 200, config.autheliaManager);
+        return;
+    }
+
+
+    /*
+     * ============================================================
+     * OIDC CLIENTS
+     * ============================================================
+     */
+
+    // GET OIDC clients
+    if (
+        req.method === "GET" &&
+        req.url === "/api/authelia/oidc/clients"
+    ) {
+        const clients = await getOidcClients();
+
+        sendJson(res, 200, clients);
+        return;
+    }
+
+// CREATE OIDC client
+    if (
+        req.method === "POST" &&
+        req.url === "/api/authelia/oidc/clients"
+    ) {
+        const body = await readJson(req);
+
+        const client = await createOidcClient(body);
+
+        sendJson(res, 201, client);
+        return;
+    }
+
+// UPDATE OIDC client
+    const updateMatch = req.url?.match(
+        /^\/api\/authelia\/oidc\/clients\/([^/]+)$/
+    );
+
+    if (
+        req.method === "PUT" &&
+        updateMatch
+    ) {
+        const clientId = decodeURIComponent(updateMatch[1]);
+
+        const body = await readJson(req);
+
+        const client = await updateOidcClient(
+            clientId,
+            body
+        );
+
+        sendJson(res, 200, client);
+        return;
+    }
+
+// DELETE OIDC client
+    const deleteMatch = req.url?.match(
+        /^\/api\/authelia\/oidc\/clients\/([^/]+)$/
+    );
+
+    if (
+        req.method === "DELETE" &&
+        deleteMatch
+    ) {
+        const clientId = decodeURIComponent(deleteMatch[1]);
+
+        await deleteOidcClient(clientId);
+
+        sendJson(res, 200, {
+            success: true,
+        });
+
         return;
     }
 

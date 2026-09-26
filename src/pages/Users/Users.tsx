@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import type {AutheliaUser} from "../../api/types.ts";
 import {deleteUser, getUsers} from "../../api/authelia/users.ts";
-import {Button, IconButton, Input} from "../../components";
+import {Button, IconButton, Input, Tag} from "../../components";
 import {IconEdit, IconPlus, IconTrash, IconZoom} from "@tabler/icons-react";
 import {EditUserModal} from "./components/EditUserModal.tsx";
 import {AddUserModal} from "./components/AddUserModal.tsx";
@@ -68,9 +68,9 @@ const Users = () => {
                                             <p className={'text-gray-500'}>{user.email}</p>
                                         </div>
                                         <div className={'flex gap-1'}>
-                                            {user.groups.map((group => (
-                                                <span key={group} className={'py-1 px-2 border border-gray-200 rounded-lg text-xs'}>{group}</span>
-                                            )))}
+                                            {user.groups.map((group, index) => (
+                                                <Tag text={group} variant={'secondary'} key={index} />
+                                            ))}
                                         </div>
                                     </div>
                                     <div className={'flex items-center gap-2'}>
