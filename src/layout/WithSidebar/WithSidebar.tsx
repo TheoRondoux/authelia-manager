@@ -1,20 +1,45 @@
 import {Outlet, useLocation} from "react-router";
 import {
+    IconCheck,
     IconFingerprint,
-    IconLayoutDashboard,
+    IconLayoutDashboard, IconRefresh,
     IconShieldCheck,
-    IconUsers,
+    IconUsers, IconX,
 } from "@tabler/icons-react";
 import {SidebarLink} from "./components/SidebarLink.tsx";
+import {Button} from "../../components";
+import {useState} from "react";
+import {reloadAuthelia} from "../../api/authelia/authelia.ts";
 
 export const WithSidebar = () => {
+
+
+    const [isRefreshing, setIsRefreshing] = useState(false);
+    const [refreshState, setRefreshState] = useState<'success' | 'error' | null>(null);
+
+    const handleRefresh = () => {
+        setIsRefreshing(true);
+        reloadAuthelia()
+            .then(() => {
+                setRefreshState('success');
+            })
+            .catch(() => {
+                setRefreshState('error');
+            })
+            .finally(() => {
+            setIsRefreshing(false);
+            setTimeout(() => {
+                setRefreshState(null);
+            }, 3000);
+        });
+    };
 
     const location = useLocation();
 
     return (
         <div className={'flex h-screen'}>
-            <section className={'flex flex-col w-1/6 p-6 bg-gray-50 gap-6 border-r border-gray-200'}>
-                <div className={'flex items-center gap-2 w-full'}>
+            <section className={'flex flex-col w-1/6 bg-gray-50 gap-6 border-r border-gray-200'}>
+                <div className={'flex items-center gap-2 w-full pt-6 px-6'}>
                     <div className={'p-2 rounded-xl bg-purple-800 text-white w-fit h-fit'}>
                         <IconFingerprint size={24} />
                     </div>
@@ -23,7 +48,7 @@ export const WithSidebar = () => {
                         <p className={'text-gray-500 text-sm'}>Manage Authelia settings</p>
                     </div>
                 </div>
-                <div className={'grid grid-cols-1 gap-2 w-full'}>
+                <div className={'flex flex-col gap-2 w-full flex-1 px-6'}>
                     <SidebarLink
                         href={'/'}
                         label={'Tableau de bord'}
@@ -42,6 +67,17 @@ export const WithSidebar = () => {
                         icon={<IconShieldCheck size={24} />}
                         isActive={location.pathname === '/access-rules'}
                     />
+                </div>
+                <div className={'flex items-center w-full border-t border-gray-200 p-6'}>
+                    <Button
+                        variant={refreshState === 'success' ? 'success-outline' : refreshState === 'error' ? 'danger-outline' : 'secondary'}
+                        startSlot={refreshState === null && <IconRefresh className={`-scale-x-100 ${isRefreshing && 'animate-spin-reverse'}`} size={20} />}
+                        endSlot={refreshState === 'success' ? <IconCheck size={20} /> : refreshState === 'error' ? <IconX size={20} /> : null}
+                        onClick={handleRefresh}
+                        disabled={isRefreshing || refreshState !== null}
+                    >
+                        Sync configuration
+                    </Button>
                 </div>
             </section>
             <section className={'flex-1 px-8 xl:px-60 py-10'}>
