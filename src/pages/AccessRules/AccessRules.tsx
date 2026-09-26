@@ -41,7 +41,7 @@ const AccessRules = () => {
                     <h1 className={'text-4xl font-semibold'}>Règles d'accès</h1>
                     <p className={'text-gray-500'}>Définissez quelle politique d'authentification s'applique à quel groupe sur quel site.</p>
                 </div>
-                <div className={'flex justify-between'}>
+                <div className={'flex flex-col md:flex-row gap-2 justify-between'}>
                     <Input
                         value={searchValue}
                         onChange={(e) => setSearchValue(e.target.value)}

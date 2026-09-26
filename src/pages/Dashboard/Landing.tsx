@@ -26,7 +26,7 @@ function Landing() {
         <h1 className={'text-4xl font-semibold'}>Tableau de bord</h1>
         <p className={'text-gray-500'}>Vue d'ensemble de votre configuration Authelia</p>
       </header>
-      <section className={'grid grid-cols-4 gap-2'}>
+      <section className={'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2'}>
         <DashboardCard title={'Utilisateurs'} count={users.length} icon={<IconUsers size={32} />} />
         <DashboardCard title={'Règles d\'accès'} count={accessRules.length} icon={<IconShieldCheck size={32} />} />
       </section>

@@ -41,7 +41,7 @@ const Users = () => {
                     <h1 className={'text-4xl font-semibold'}>Utilisateurs</h1>
                     <p className={'text-gray-500'}>Gérez les comptes et leurs appartenances aux groupes.</p>
                 </div>
-                <div className={'flex justify-between'}>
+                <div className={'flex flex-col md:flex-row gap-2 justify-between'}>
                     <Input
                         value={searchValue}
                         onChange={(e) => setSearchValue(e.target.value)}
