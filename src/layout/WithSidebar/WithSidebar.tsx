@@ -183,7 +183,7 @@ export const WithSidebar = () => {
                     </div>
                 </div>
             </section>
-            <section className={'flex-1 px-8 xl:px-60 py-10'}>
+            <section className={'flex-1 px-8 xl:px-60 py-10 overflow-y-auto'}>
                 <Outlet />
             </section>
         </div>
