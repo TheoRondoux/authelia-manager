@@ -1,14 +1,19 @@
 import {useEffect, useState} from "react";
 import {getUsers} from "../../api/authelia/users.ts";
-import type {AccessRule, AutheliaUser} from "../../api/types.ts";
+import type {AccessRule, AutheliaUser, OidcClient} from "../../api/types.ts";
 import {DashboardCard} from "./components/DashboardCard.tsx";
-import {IconShieldCheck, IconUsers} from "@tabler/icons-react";
+import {IconBrandOauth, IconShieldCheck, IconUsers} from "@tabler/icons-react";
 import {getAccessRules} from "../../api/authelia/access-rules.ts";
+import {getOidcClients} from "../../api/authelia/oidc.ts";
+import {useNavigate} from "react-router";
 
 function Landing() {
 
+  const navigate = useNavigate();
+
   const [users, setUsers] = useState<AutheliaUser[]>([]);
   const [accessRules, setAccessRules] = useState<AccessRule[]>([]);
+  const [oidcClients, setOidcClients] = useState<OidcClient[]>([]);
 
   useEffect(() => {
     getUsers().then((data) => {
@@ -17,6 +22,10 @@ function Landing() {
 
     getAccessRules().then((data) => {
       setAccessRules(data)
+    });
+
+    getOidcClients().then((data) => {
+      setOidcClients(data)
     });
   }, [])
 
@@ -27,8 +36,9 @@ function Landing() {
         <p className={'text-gray-500'}>Vue d'ensemble de votre configuration Authelia</p>
       </header>
       <section className={'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2'}>
-        <DashboardCard title={'Utilisateurs'} count={users.length} icon={<IconUsers size={32} />} />
-        <DashboardCard title={'Règles d\'accès'} count={accessRules.length} icon={<IconShieldCheck size={32} />} />
+        <DashboardCard title={'Utilisateurs'} count={users.length} icon={<IconUsers size={32} />} onClick={() => navigate('/users')} />
+        <DashboardCard title={'Règles d\'accès'} count={accessRules.length} icon={<IconShieldCheck size={32} />} onClick={() => navigate('/access-rules')} />
+        <DashboardCard title={'Clients OIDC'} count={oidcClients.length} icon={<IconBrandOauth size={32} />} onClick={() => navigate('/oidc-clients')} />
       </section>
     </div>
   )
