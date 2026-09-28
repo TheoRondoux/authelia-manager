@@ -4,6 +4,7 @@ Interface web d'administration pour **Authelia**, permettant de gérer simplemen
 
 Le projet repose sur un frontend React/Vite et une API Node.js servant de couche intermédiaire avec les fichiers de configuration d'Authelia.
 
+<img src="/docs/img/users_tab.png" alt="Screenshot" width="800">
 ---
 
 ## ✨ Fonctionnalités
@@ -144,20 +145,16 @@ Exemple de configuration à rajouter au Docker compose de Authelia :
 ```yaml
 services:
   authelia-manager:
-    build:
-      context: ./authelia-manager
-      dockerfile: Dockerfile
-
+    image: ghcr.io/theorondoux/authelia-manager:latest
     container_name: authelia-manager
-
     volumes:
       # Configuration Authelia
       - ./config:/authelia-config
 
-      # Permet au manager d'exécuter le script de reload
+      # Allows the manager to execute the reload script
       - /usr/local/bin/reload-authelia.sh:/usr/local/bin/reload-authelia.sh:ro
 
-      # Accès au Docker daemon pour le script de reload
+      # Docker daemon access for reload script
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - my_custom_net
